@@ -38,6 +38,14 @@ def pick(paragraphs, select, k):
     """
     # BEGIN PROBLEM 1
     "*** YOUR CODE HERE ***"
+    desired = []
+    for i in paragraphs:
+        if select(i) == True:
+            desired.append(i)
+    if k < len(desired):
+        return desired[k]
+    else:
+        return ''
     # END PROBLEM 1
 
 
@@ -58,6 +66,17 @@ def about(subject):
 
     # BEGIN PROBLEM 2
     "*** YOUR CODE HERE ***"
+    def check_if_contain(paragraph):
+        for i in subject:
+           
+           for j in split(remove_punctuation(paragraph)):
+                 
+                if i == lower(j):
+                    return True
+                
+        return False
+    
+    return check_if_contain
     # END PROBLEM 2
 
 
@@ -88,6 +107,23 @@ def accuracy(typed, source):
     source_words = split(source)
     # BEGIN PROBLEM 3
     "*** YOUR CODE HERE ***"
+    match_num = 0
+    length = len(typed_words)
+    if length == 0:
+        if len(source_words) == 0:
+            return 100.0
+        else:
+            return 0.0
+    
+    try:
+        for i in range(length):
+            
+            if typed_words[i] == source_words[i]:
+                match_num += 1
+    except IndexError:
+        match_num += 0
+    
+    return (match_num / length) * 100
     # END PROBLEM 3
 
 
@@ -106,6 +142,7 @@ def wpm(typed, elapsed):
     assert elapsed > 0, "Elapsed time must be positive"
     # BEGIN PROBLEM 4
     "*** YOUR CODE HERE ***"
+    return len(typed) / 5 / (elapsed / 60)
     # END PROBLEM 4
 
 
@@ -167,6 +204,19 @@ def autocorrect(typed_word, word_list, diff_function, limit):
     """
     # BEGIN PROBLEM 5
     "*** YOUR CODE HERE ***"
+   
+    if typed_word in word_list:
+        return typed_word
+    else:
+        diff_list = [diff_function(typed_word, i, limit) for i in word_list]
+        min_diff = min(diff_list)
+        if min_diff > limit:
+            return typed_word
+        else:
+            for j in range(len(diff_list)):
+                if diff_list[j] == min_diff:
+                    return word_list[j]
+                
     # END PROBLEM 5
 
 
@@ -193,7 +243,22 @@ def furry_fixes(typed, source, limit):
     5
     """
     # BEGIN PROBLEM 6
-    assert False, 'Remove this line'
+    difference = 0
+    len_typed, len_source = len(typed), len(source)
+    def helper(typed, source): # define a helper function to avoid the change in value of difference and len
+        nonlocal difference # since the value of difference gets changed, i need to nonlocal it 
+        if difference > limit:
+            return limit + 1 - difference
+        if len(typed) == 0 or len(source) == 0:
+            return abs(len_typed - len_source)
+        
+
+        if typed[0] == source[0]:
+            return helper(typed[1:], source[1:])  
+        else:
+            difference += 1
+            return helper(typed[1:], source[1:]) + 1
+    return helper(typed, source)
     # END PROBLEM 6
 
 
@@ -214,24 +279,25 @@ def minimum_mewtations(typed, source, limit):
     >>> minimum_mewtations("ckiteus", "kittens", big_limit) # ckiteus -> kiteus -> kitteus -> kittens
     3
     """
-    assert False, 'Remove this line'
-    if ___________: # Base cases should go here, you may add more base cases as needed.
-        # BEGIN
-        "*** YOUR CODE HERE ***"
-        # END
-    # Recursive cases should go below here
-    if ___________: # Feel free to remove or add additional cases
-        # BEGIN
-        "*** YOUR CODE HERE ***"
-        # END
-    else:
-        add = ... # Fill in these lines
-        remove = ...
-        substitute = ...
-        # BEGIN
-        "*** YOUR CODE HERE ***"
-        # END
+    # BEGIN PROBLEM 7
+    if limit < 0:
+        # We have already used up more edits than LIMIT allows, so this path
+        # costs more than LIMIT. Return a value greater than LIMIT so that the
+        # caller knows this path is too expensive.
+        return limit + 1
+    if len(typed) == 0 or len(source) == 0:
+        # One word is exhausted, so every remaining character must be added
+        # or removed.
+        return len(typed) + len(source)
+    if typed[0] == source[0]:
+        # The first characters already match, so this costs nothing.
+        return minimum_mewtations(typed[1:], source[1:], limit)
 
+    add = minimum_mewtations(typed, source[1:], limit - 1)        # insert source[0]
+    remove = minimum_mewtations(typed[1:], source, limit - 1)     # delete typed[0]
+    substitute = minimum_mewtations(typed[1:], source[1:], limit - 1)  # replace typed[0]
+    return 1 + min(add, remove, substitute)
+    # END PROBLEM 7
 
 # Ignore the line below
 minimum_mewtations = count(minimum_mewtations)
@@ -276,6 +342,15 @@ def report_progress(typed, source, user_id, upload):
     """
     # BEGIN PROBLEM 8
     "*** YOUR CODE HERE ***"
+    correct_num = 0
+    for i in range(len(typed)):
+        if typed[i] == source[i]:
+            correct_num += 1
+        else:
+            break
+    rate = correct_num / len(source)
+    upload({'id': user_id, 'progress': rate})
+    return rate
     # END PROBLEM 8
 
 
@@ -300,8 +375,16 @@ def time_per_word(words, timestamps_per_player):
     tpp = timestamps_per_player  # A shorter name (for convenience)
     # BEGIN PROBLEM 9
     times = []  # You may remove this line
-    # END PROBLEM 9
+    for i in tpp:
+        t, k = 0, 1
+        time_for_one = []
+        while k <= len(i) - 1:
+            time_for_one.append(abs(i[t] - i[k]))
+            t,k = t + 1, k + 1
+        times.append(time_for_one)
     return {'words': words, 'times': times}
+    # END PROBLEM 9
+    
 
 
 def fastest_words(words_and_times):
@@ -327,6 +410,19 @@ def fastest_words(words_and_times):
     word_indices = range(len(words))    # contains an *index* for each word
     # BEGIN PROBLEM 10
     "*** YOUR CODE HERE ***"
+    goal_list = [[] for _ in player_indices]
+    
+    for j in word_indices:
+
+        time_list_for_a_word = [get_time(times, i, j) for i in player_indices]
+        min_time = min(time_list_for_a_word)
+
+        for k in range(len(times)):
+            if time_list_for_a_word[k] == min_time:
+                goal_list[k].append(words[j])
+                break
+
+    return goal_list   
     # END PROBLEM 10
 
 
@@ -352,7 +448,7 @@ def get_time(times, player_num, word_index):
     return times[player_num][word_index]
 
 
-enable_multiplayer = False  # Change to True when you're ready to race.
+enable_multiplayer = True  # Change to True when you're ready to race.
 
 ##########################
 # Command Line Interface #

@@ -21,6 +21,7 @@ def make_fair_dice(sides):
         return randint(1,sides)
     return dice
 
+"""Use function make_fair_dice to generate two dice with 4 and 6 sides separately."""
 four_sided = make_fair_dice(4)
 six_sided = make_fair_dice(6)
 

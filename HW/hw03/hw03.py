@@ -24,7 +24,13 @@ def num_eights(n):
     ...       ['Assign', 'AnnAssign', 'AugAssign', 'NamedExpr', 'For', 'While'])
     True
     """
-    "*** YOUR CODE HERE ***"
+    if n == 0:
+        return 0
+    
+    if n % 10 == 8:
+        return 1 + num_eights(n // 10)
+    else:
+        return num_eights(n // 10)
 
 
 def digit_distance(n):
@@ -47,6 +53,10 @@ def digit_distance(n):
     True
     """
     "*** YOUR CODE HERE ***"
+    if n < 10:
+        return 0
+
+    return digit_distance(n // 10) + abs(n % 10 - n // 10 % 10)
 
 
 def interleaved_sum(n, odd_func, even_func):
@@ -71,6 +81,19 @@ def interleaved_sum(n, odd_func, even_func):
     True
     """
     "*** YOUR CODE HERE ***"
+  
+
+    def odd_interleaved_sum(k):
+        if k == n:
+            return odd_func(k)
+        return odd_func(k) + even_interleaved_sum(k + 1)
+
+    def even_interleaved_sum(m):
+        if m == n:
+            return even_func(n)
+        return even_func(m) + odd_interleaved_sum(m + 1)
+
+    return odd_interleaved_sum(1)
 
 
 def next_smaller_dollar(bill):
@@ -106,7 +129,18 @@ def count_dollars(total):
     >>> check(HW_SOURCE_FILE, 'count_dollars', ['While', 'For'])
     True
     """
-    "*** YOUR CODE HERE ***"
+    def helper(amount, n):
+        if amount < 0:
+            return 0
+        if amount == 0:
+            return 1
+        if n == 1:
+            return 1
+        return helper(amount - n, n) + helper(amount, next_smaller_dollar(n))
+
+    return helper(total, 100)
+
+    
 
 
 def next_larger_dollar(bill):
@@ -143,6 +177,15 @@ def count_dollars_upward(total):
     True
     """
     "*** YOUR CODE HERE ***"
+    def helper(amount, n):
+        if amount == 0:
+            return 1
+        if amount < 0:
+            return 0
+        if n is None:
+            return 0
+        return helper(amount - n, n) + helper(amount, next_larger_dollar(n))
+    return helper(total, 1)
 
 
 def print_move(origin, destination):

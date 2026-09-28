@@ -1,4 +1,7 @@
 
+from threading import local
+
+
 def composite_identity(f, g):
     """
     Return a function with one parameter x that returns True if f(g(x)) is
@@ -14,6 +17,12 @@ def composite_identity(f, g):
     False
     """
     "*** YOUR CODE HERE ***"
+    def return_function(x):
+        if f(g(x)) == g(f(x)):
+            return True
+        else:
+            return False
+    return return_function
 
 
 def sum_digits(y):
@@ -60,6 +69,14 @@ def count_cond(condition):
     8
     """
     "*** YOUR CODE HERE ***"
+    def return_function(n):
+        total = 0
+        for i in range(1, n + 1):
+            if condition(n, i) == True:
+                total += 1
+        return total
+    return return_function
+
 
 
 def multiple(a, b):
@@ -71,7 +88,10 @@ def multiple(a, b):
     42
     """
     "*** YOUR CODE HERE ***"
-
+    max_one = max(a, b)
+    while max_one % a !=0 or max_one % b != 0:
+        max_one += 1
+    return max_one
 
 
 def cycle(f1, f2, f3):
@@ -101,4 +121,17 @@ def cycle(f1, f2, f3):
     19
     """
     "*** YOUR CODE HERE ***"
-
+    def my_cycle(n):
+        def nested(value):
+            return_value = value
+            for i in range(1, n + 1):
+                if i % 3 == 1:
+                    return_value = f1(return_value)
+                elif i % 3 == 2:
+                    return_value = f2(return_value)
+                else:
+                    return_value = f3(return_value)
+            
+            return return_value
+        return nested 
+    return my_cycle
