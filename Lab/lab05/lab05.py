@@ -27,6 +27,9 @@ def insert_items(s, before, after):
     True
     """
     "*** YOUR CODE HERE ***"
+    for i, j in enumerate(s):
+        if j == before:
+            s.insert(i + 1, after)
 
 
 def group_by(s, fn):
