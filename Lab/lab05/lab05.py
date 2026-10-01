@@ -27,10 +27,14 @@ def insert_items(s, before, after):
     True
     """
     "*** YOUR CODE HERE ***"
-    for i, j in enumerate(s):
-        if j == before:
+    i = 0
+    while i < len(s):
+        if s[i] == before:
             s.insert(i + 1, after)
-
+            i += 2  # Skip the inserted item; inspect the next original item
+        else:
+            i += 1
+    return s
 
 def group_by(s, fn):
     """Return a dictionary of lists that together contain the elements of s.
@@ -43,12 +47,12 @@ def group_by(s, fn):
     {9: [-3, 3], 4: [-2, 2], 1: [-1, 1], 0: [0]}
     """
     grouped = {}
-    for ____ in ____:
-        key = ____
+    for i in s:
+        key = fn(i)
         if key in grouped:
-            ____
+            grouped[key].append(i)
         else:
-            grouped[key] = ____
+            grouped[key] = [i]
     return grouped
 
 
@@ -74,6 +78,11 @@ def count_occurrences(t, n, x):
     2
     """
     "*** YOUR CODE HERE ***"
+    times = 0
+    for i in range(n):
+        if x == next(t):
+            times += 1
+    return times
 
 
 def repeated(t, k):
@@ -97,6 +106,16 @@ def repeated(t, k):
     """
     assert k > 1
     "*** YOUR CODE HERE ***"
+    previous = next(t)
+    count = 1
+    while count < k:
+        current = next(t)
+        if current == previous:
+            count += 1
+        else:
+            previous = current
+            count = 1
+    return previous
 
 
 def sprout_leaves(t, leaves):
@@ -133,7 +152,9 @@ def sprout_leaves(t, leaves):
           2
     """
     "*** YOUR CODE HERE ***"
-
+    if is_leaf(t):
+        return tree(label(t), [tree(leaf) for leaf in leaves])
+    return tree(label(t), [sprout_leaves(b, leaves) for b in branches(t)])
 
 def partial_reverse(s, start):
     """Reverse part of a list in-place, starting with start up to the end of
@@ -148,7 +169,12 @@ def partial_reverse(s, start):
     [1, 2, 7, 6, 5, 3, 4]
     """
     "*** YOUR CODE HERE ***"
-
+    length = len(s)
+    i, j = start, len(s) - 1
+    while i < j:
+        s[i], s[j] = s[j], s[i]
+        i += 1
+        j -= 1
 
 
 # Tree Data Abstraction
