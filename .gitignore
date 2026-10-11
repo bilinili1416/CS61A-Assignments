@@ -17,3 +17,4 @@ __pycache__/
 *.out
 *.class
 
+/Project/cpp_cats/
