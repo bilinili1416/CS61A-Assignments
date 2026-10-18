@@ -284,6 +284,30 @@ class WallAnt(Ant):
 
 # BEGIN Problem 7
 # The HungryAnt Class
+class HungryAnt(Ant):
+    """
+    HungryAnt will will select a random Bee from its place and deal damage 
+    to the Bee equal to the Bee's health, eating it whole
+    """
+    name = "Hungry"
+    implemented = True
+    food_cost = 4
+    chew_cooldown = 3
+
+    def __init__(self, health=1):
+        super().__init__(health)
+        self.cooldown = 0
+
+    def action(self, gamestate):
+        if self.cooldown == 0:
+            if self.place.bees:
+                attacked_bee = random_bee(self.place.bees)
+                attacked_bee.reduce_health(attacked_bee.health)
+                self.cooldown = self.chew_cooldown
+        else:
+            self.cooldown -= 1
+        return super().action(gamestate)
+
 # END Problem 7
 
 
