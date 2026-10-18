@@ -262,7 +262,7 @@ class FireAnt(Ant):
         bee_damage = amount
         if self.health <= amount:
             bee_damage += self.damage
-        super().reduce_health(amount)
+        Ant.reduce_health(self, amount)
         for bee in bees:
             bee.reduce_health(bee_damage)
 
@@ -270,6 +270,16 @@ class FireAnt(Ant):
 
 # BEGIN Problem 6
 # The WallAnt class
+class WallAnt(Ant):
+    """
+    WallAnt does nothing in each turn, but has a large health value.
+    """
+    implemented = True
+    food_cost = 4
+    name = "Wall"
+
+    def __init__(self, health=4):
+        super().__init__(health)
 # END Problem 6
 
 # BEGIN Problem 7
