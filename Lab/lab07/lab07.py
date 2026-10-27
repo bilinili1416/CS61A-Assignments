@@ -1,3 +1,5 @@
+import copy
+
 class Account:
     """An account has a balance and a holder.
 
@@ -40,7 +42,12 @@ class Account:
         """Return the number of years until balance would grow to amount."""
         assert self.balance > 0 and amount > 0 and self.interest > 0
         "*** YOUR CODE HERE ***"
-
+        year = 0
+        b = self.balance
+        while b < amount:
+            b *= (1 + self.interest)
+            year += 1
+        return year
 
 class FreeChecking(Account):
     """A bank account that charges for withdrawals, but the first two are free!
@@ -70,7 +77,13 @@ class FreeChecking(Account):
     free_withdrawals = 2
 
     "*** YOUR CODE HERE ***"
-
+    def withdraw(self, amount):
+        if self.free_withdrawals:
+            self.free_withdrawals -= 1
+            return super().withdraw(amount)
+        else:
+            self.balance -= self.withdraw_fee
+            return super().withdraw(amount)
 
 def without(s, i):
     """Return a new linked list like s but without the element at index i.
@@ -86,6 +99,15 @@ def without(s, i):
     True
     """
     "*** YOUR CODE HERE ***"
+    s2 = copy.deepcopy(s)
+    index = 0
+    if s2.rest is Link.empty and i != index:
+        return s2
+    if index == i:
+        return s2.rest
+
+    s2.rest = without(s2.rest, i - 1)    
+    return s2
 
 
 def duplicate_link(s, val):
@@ -105,7 +127,21 @@ def duplicate_link(s, val):
     Link(1, Link(2, Link(2, Link(2, Link(2, Link(3))))))
     """
     "*** YOUR CODE HERE ***"
+    l = Link(val)
+    if s.rest is Link.empty and s.first != val:
+        return 
+    if s.rest is Link.empty and s.first == val:
+        s.rest = l
+        return 
 
+    if s.first == val:
+        l.rest = s.rest
+        s.rest = l
+        duplicate_link(s.rest.rest, val)
+    else:
+        duplicate_link(s.rest, val)
+
+    # return s
 
 class Link:
     """A linked list.
